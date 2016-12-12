@@ -2,12 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.milimili.mediacodecex">
 
-    <uses-feature android:required="true" android:name="android.hardware.Camera"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-feature
+        android:name="android.hardware.Camera"
+        android:required="true" />
 
-    <uses-permission-sdk-23 android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,9 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--配置当屏幕方向改变的时候不重新执行生命周期-->
-        <activity android:name=".camera_ex.CameraExActivity"
-            android:configChanges="orientation|screenSize"/>
+        <!-- 配置当屏幕方向改变的时候不重新执行生命周期 -->
+        <activity
+            android:name=".camera_ex.CameraExActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".decoder_ex.DecodeExActivity" android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
