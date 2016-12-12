@@ -13,5 +13,7 @@ public interface ICameraOperation {
     //拍照
     void takePhoto();
     //录制视频
-    void recordVideo();
+    void startRecord();
+    void stopRecord();
+    boolean isRecording();
 }

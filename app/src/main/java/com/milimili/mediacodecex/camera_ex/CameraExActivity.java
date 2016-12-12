@@ -15,6 +15,7 @@ import com.milimili.mediacodecex.R;
  * 3.屏幕旋转，相机自动旋转
  * 4.SurfaceView置顶(setZOrderOnTop)的含义及其效果
  * 5.手动对焦
+ * 6.拍照功能
  */
 public class CameraExActivity extends AppCompatActivity{
 
@@ -54,7 +55,28 @@ public class CameraExActivity extends AppCompatActivity{
             }
         });
 
+        final Button recordVideo = (Button) findViewById(R.id.btn_record);
+        recordVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cameraView.isRecording()) {
+                    //停止录制
+                    cameraView.stopRecord();
+                    recordVideo.setText("录制");
+                }else {
+                    cameraView.startRecord();
+                    recordVideo.setText("停止录制");
+                }
+            }
+        });
+
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (cameraView.isRecording()) {
+            cameraView.stopRecord();
+        }
+    }
 }
