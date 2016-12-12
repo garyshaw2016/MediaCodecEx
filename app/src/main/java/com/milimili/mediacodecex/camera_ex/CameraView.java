@@ -1,7 +1,10 @@
 package com.milimili.mediacodecex.camera_ex;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -15,9 +18,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.milimili.mediacodecex.utils.CameraUtil;
 import com.milimili.mediacodecex.utils.FileUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,13 +103,13 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         } catch (IOException e) {
             e.printStackTrace();
         }
-        initCamera();
+        initCameraPreview();
     }
 
     /**
      * 初始化相机和设置其参数
      */
-    private void initCamera() {
+    private void initCameraPreview() {
         if (camera==null) {
             Log.e(TAG,"camera==null");
             return;
@@ -125,19 +130,13 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         parameters.setPreviewSize(bestSize.width, bestSize.height);
         //2.设置相机预览方向
         setCameraDisplayOrientation();
-        //3.设置相机拍照后的照片方向
-//        parameters.setRotation(90);
-        //4.自动对焦(视频）
-        List<String> supportedFocusModes = parameters.getSupportedFocusModes();
-        for (int i = 0; i < supportedFocusModes.size(); i++) {
-            String s = supportedFocusModes.get(i);
-            Log.d(TAG, "supportFocusMode:" + s);
-            if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO.equals(s)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-            } else if (Camera.Parameters.FOCUS_MODE_FIXED.equals(s)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
-            }
+        if (getContext() instanceof Activity) {
+            CameraUtil.setCameraDisplayOrientation((Activity) getContext(),cameraId,camera);
         }
+        //3.设置相机拍照后的照片方向
+        setPictureOrientation(parameters);
+        //4.自动对焦(视频）
+        setAutoFocus(parameters);
         //5.获取相机（不）支持的闪光灯模式
         List<String> supportedFlashModes = parameters.getSupportedFlashModes();
         if (supportedFlashModes != null) {
@@ -158,16 +157,33 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         camera.startPreview();
     }
 
+    private void setAutoFocus(Camera.Parameters parameters) {
+        List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+        for (int i = 0; i < supportedFocusModes.size(); i++) {
+            String s = supportedFocusModes.get(i);
+            Log.d(TAG, "supportFocusMode:" + s);
+            if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO.equals(s)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            } else if (Camera.Parameters.FOCUS_MODE_FIXED.equals(s)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+            }
+        }
+    }
+
+    private void setPictureOrientation(Camera.Parameters parameters) {
+        if (getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT) {
+            parameters.setRotation(90);
+        }else {
+            parameters.setRotation(0);
+        }
+    }
+
     /**
      * 根据屏幕方向设置相机的展示方向
      */
     public void setCameraDisplayOrientation() {
         //如果屏幕方向发生改变，则改变相机方向和参数
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            camera.setDisplayOrientation(0);//横屏
-        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            camera.setDisplayOrientation(90);//竖屏
-        }
+        CameraUtil.setCameraDisplayOrientation((Activity) getContext(),cameraId,camera);
     }
 
     public void releaseCamera() {
@@ -223,6 +239,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void takePhoto() {
         if (camera != null) {
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraId,cameraInfo);
+            Log.e(TAG,"camera_orientation:"+cameraInfo.orientation);
             camera.takePicture(new Camera.ShutterCallback() {
                 @Override
                 public void onShutter() {
@@ -230,9 +249,28 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }, null, new Camera.PictureCallback() {
                 @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
+                public void onPictureTaken(final byte[] data, Camera camera) {
                     //保存图片等操作
                     camera.startPreview();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, null);
+                            //压缩
+                            try {
+                                File imageFile = FileUtil.getOutputMediaFile(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
+                                if (imageFile==null) {
+                                    Log.e(TAG,"imageFile==null");
+                                }else {
+                                    FileOutputStream fos = new FileOutputStream(imageFile);
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                                    fos.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
             });
         }
@@ -246,8 +284,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         //1.设置相机对象
         releaseCamera();
         camera = Camera.open(cameraId);
-            //设置展示朝向（横竖屏）
-        initCamera();
+        //设置展示朝向（横竖屏）
         setCameraDisplayOrientation();
         camera.unlock();
         mediaRecorder.setCamera(camera);
@@ -272,7 +309,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         mediaRecorder.setVideoFrameRate(FRAME_RATE);
             //4 录像回放的正确方向
         setRecorderDisplayOrientation(mediaRecorder);
-
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();

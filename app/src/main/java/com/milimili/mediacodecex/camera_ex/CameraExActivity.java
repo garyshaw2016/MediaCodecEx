@@ -16,6 +16,7 @@ import com.milimili.mediacodecex.R;
  * 4.SurfaceView置顶(setZOrderOnTop)的含义及其效果
  * 5.手动对焦
  * 6.拍照功能
+ * 7.相机录像功能
  */
 public class CameraExActivity extends AppCompatActivity{
 
@@ -69,6 +70,8 @@ public class CameraExActivity extends AppCompatActivity{
                 }
             }
         });
+
+
 
     }
 
