@@ -150,7 +150,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         //预览的回调
-        camera.setPreviewCallback(this);
+        camera.setPreviewCallbackWithBuffer(this);
 
         camera.setParameters(parameters);
         //开始预览
