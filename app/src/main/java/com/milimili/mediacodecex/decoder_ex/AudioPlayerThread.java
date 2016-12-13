@@ -15,7 +15,6 @@ import java.nio.ByteBuffer;
  * Created by luxiansheng on 16/12/12.
  * 音频播放器（解码器）
  */
-
 public class AudioPlayerThread extends Thread {
     private static final String TAG = "AudioPlayerThread";
     private MediaCodec audioDecoder;
@@ -45,7 +44,8 @@ public class AudioPlayerThread extends Thread {
                     audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
                             sampleRate, AudioFormat.CHANNEL_OUT_STEREO,
                             AudioFormat.ENCODING_PCM_16BIT,
-                            AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT),
+                            AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO,
+                                    AudioFormat.ENCODING_PCM_16BIT),
                             AudioTrack.MODE_STREAM);
 
                     break;
@@ -68,7 +68,7 @@ public class AudioPlayerThread extends Thread {
             byte[] soundBuffer = null;
             while (!Thread.interrupted()) {
                 if (!isEos) {
-                    int inIndex = audioDecoder.dequeueInputBuffer(1);
+                    int inIndex = audioDecoder.dequeueInputBuffer(10000);
                     try {
                         ByteBuffer inBuffer = inputBuffers[inIndex];
                         int sampleSize = audioExtractor.readSampleData(inBuffer, 0);
@@ -85,7 +85,7 @@ public class AudioPlayerThread extends Thread {
 
                 }
 
-                int outIndex = audioDecoder.dequeueOutputBuffer(info, 1);
+                int outIndex = audioDecoder.dequeueOutputBuffer(info, 10000);
                 switch (outIndex) {
                     case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
                         Log.d(TAG, "INFO_OUTPUT_BUFFERS_CHANGED");
@@ -93,6 +93,9 @@ public class AudioPlayerThread extends Thread {
                         break;
                     case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
                         Log.d(TAG, "New format " + audioDecoder.getOutputFormat());
+                        final MediaFormat oformat = audioDecoder.getOutputFormat();
+                        Log.d(TAG, "Output format has changed to " + oformat);
+                        audioTrack.setPlaybackRate(oformat.getInteger(MediaFormat.KEY_SAMPLE_RATE));
                         break;
                     case MediaCodec.INFO_TRY_AGAIN_LATER:
                         Log.d(TAG, "dequeueOutputBuffer timed out!");
@@ -128,4 +131,5 @@ public class AudioPlayerThread extends Thread {
             e.printStackTrace();
         }
     }
+
 }
