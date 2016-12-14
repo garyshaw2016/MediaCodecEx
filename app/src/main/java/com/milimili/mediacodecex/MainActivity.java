@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.milimili.mediacodecex.camera_ex.CameraExActivity;
 import com.milimili.mediacodecex.decoder_ex.DecodeExActivity;
+import com.milimili.mediacodecex.encoder_ex.EncodeEx_Activity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DecodeExActivity.class));
+            }
+        });
+        findViewById(R.id.btn_encode_exercise).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, EncodeEx_Activity.class));
             }
         });
     }

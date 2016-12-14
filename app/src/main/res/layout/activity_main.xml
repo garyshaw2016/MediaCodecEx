@@ -24,4 +24,10 @@
         android:layout_height="wrap_content"
         android:text="DecodeExercise" />
 
+    <Button
+        android:text="EncodeExercise"
+        android:id="@+id/btn_encode_exercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

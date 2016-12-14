@@ -29,7 +29,10 @@
         <activity
             android:name=".camera_ex.CameraExActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".decoder_ex.DecodeExActivity" android:screenOrientation="landscape"/>
+        <activity
+            android:name=".decoder_ex.DecodeExActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".encoder_ex.EncodeEx_Activity"></activity>
     </application>
 
 </manifest>
