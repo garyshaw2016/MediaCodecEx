@@ -32,7 +32,8 @@
         <activity
             android:name=".decoder_ex.DecodeExActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".encoder_ex.EncodeEx_Activity"></activity>
+        <activity android:name=".encoder_ex.EncodeEx_Activity"/>
+        <activity android:name=".encoder2_ex.EncodeEx2_Activity"/>
     </application>
 
 </manifest>
