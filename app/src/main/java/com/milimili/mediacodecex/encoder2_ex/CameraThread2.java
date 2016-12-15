@@ -16,11 +16,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class CameraThread2 extends HandlerThread implements Camera.PreviewCallback {
     private static final String TAG = "EncodeEx_Activity";
+    public static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue<>(10);
     private Camera camera;
     private long timeStamp;
     int frameNumber;
-
-    public static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue<>(10);
 
     public CameraThread2(String name) {
         super(name);

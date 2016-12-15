@@ -8,8 +8,6 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.milimili.mediacodecex.encoder_ex.CameraThread;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +48,7 @@ public class AvcEncoder2 {
         getSupportCodec();
         videoFormat = MediaFormat.createVideoFormat(mime, m_width, m_height);
         videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
         videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, m_width * m_height * 5);
         videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
         videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
@@ -111,9 +109,9 @@ public class AvcEncoder2 {
         ByteBuffer[] outputBuffers = encoder.getOutputBuffers();
         //开始循环取数据并编码
         while (isRunning) {
-            if (CameraThread.YUVQueue.size() > 0) {
+            if (CameraThread2.YUVQueue.size() > 0) {
                 //取数据
-                inputDatas = CameraThread.YUVQueue.poll();
+                inputDatas = CameraThread2.YUVQueue.poll();
                 byte[] yuv420p = new byte[m_width * m_height * 3 / 2];
                 //转码
                 NV21ToNV12(inputDatas, yuv420p, m_width, m_height);
@@ -143,6 +141,7 @@ public class AvcEncoder2 {
                             //配置信息帧，先保存数据
                             configBytes = new byte[bufferInfo.size];
                             configBytes = outData;
+                            bos.write(configBytes);
                         } else if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) {
                             byte[] keyFrame = new byte[bufferInfo.size + configBytes.length];
                             System.arraycopy(configBytes, 0, keyFrame, 0, configBytes.length);//先cp配置帧
