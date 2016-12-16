@@ -11,7 +11,7 @@ public class MuxActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mux);
-        DecodeEncodeTest test = new DecodeEncodeTest();
+        ExtractMedia test = new ExtractMedia();
         test.runTest();
     }
 }
