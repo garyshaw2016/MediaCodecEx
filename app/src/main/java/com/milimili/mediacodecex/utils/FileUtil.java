@@ -17,6 +17,8 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
  */
 
 public class FileUtil {
+    public static final String TAG = "FileUtil";
+    public static final String SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
 
     /** Create a File for saving an image or video */
     public static File getOutputMediaFile(int type){
@@ -52,4 +54,18 @@ public class FileUtil {
         return mediaFile;
     }
 
+    /**
+     * 在手机根目录下创建一个文件
+     * @param fileName 文件名
+     */
+    public static File createFile(String fileName) {
+        File file = new File(SDCARD+fileName);
+        if (file.exists()) {
+            boolean isSuccess = file.delete();
+            if (!isSuccess) {
+                Log.e(TAG,"file delete fail");
+            }
+        }
+        return file;
+    }
 }

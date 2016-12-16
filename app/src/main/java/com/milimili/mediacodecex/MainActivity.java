@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.milimili.mediacodecex.audio_record_ex.AudioEx_Activity;
 import com.milimili.mediacodecex.camera_ex.CameraExActivity;
 import com.milimili.mediacodecex.decoder_ex.DecodeExActivity;
 import com.milimili.mediacodecex.encoder2_ex.EncodeEx2_Activity;
@@ -46,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this,MuxActivity.class));
+            }
+        });
+        findViewById(R.id.btn_audio_record).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AudioEx_Activity.class));
             }
         });
 

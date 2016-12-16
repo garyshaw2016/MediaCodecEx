@@ -35,7 +35,8 @@
             android:screenOrientation="landscape" />
         <activity android:name=".encoder_ex.EncodeEx_Activity" />
         <activity android:name=".encoder2_ex.EncodeEx2_Activity" />
-        <activity android:name=".mediamuxer_ex.MuxActivity"></activity>
+        <activity android:name=".mediamuxer_ex.MuxActivity" />
+        <activity android:name=".audio_record_ex.AudioEx_Activity"/>
     </application>
 
 </manifest>
