@@ -49,7 +49,7 @@ public class AudioRecordEx extends Thread {
         if (isRecording) {
             throw new RuntimeException("mission is executing");
         }
-        int audioSrc = MediaRecorder.AudioSource.MIC;//数据源
+        int audioSrc = MediaRecorder.AudioSource.CAMCORDER;//数据源
         int sampleRateInHz = 44100;//采样率 4000-192000
         int channelConfig = AudioFormat.CHANNEL_OUT_STEREO;//外放双声道
         int audioForamt = AudioFormat.ENCODING_PCM_16BIT;//（量化精度）位宽
@@ -81,7 +81,7 @@ public class AudioRecordEx extends Thread {
             } else {
                 //写入到本地
                 try {
-                    bos.write(minbuffers);
+                    bos.write(minbuffers,0,ret);
                 } catch (IOException e) {
                     e.printStackTrace();
                     audioRecorder.stop();
@@ -93,7 +93,7 @@ public class AudioRecordEx extends Thread {
     }
 
     public void stopRecord() throws Exception {
-        interrupted();
+        Thread.interrupted();
         join(1000);
         if (audioRecorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
             audioRecorder.stop();
