@@ -9,6 +9,7 @@ import com.milimili.mediacodecex.camera_ex.CameraExActivity;
 import com.milimili.mediacodecex.decoder_ex.DecodeExActivity;
 import com.milimili.mediacodecex.encoder2_ex.EncodeEx2_Activity;
 import com.milimili.mediacodecex.encoder_ex.EncodeEx_Activity;
+import com.milimili.mediacodecex.mediamuxer_ex.MuxActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,5 +42,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, EncodeEx2_Activity.class));
             }
         });
+        findViewById(R.id.btn_mux).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,MuxActivity.class));
+            }
+        });
+
     }
 }
