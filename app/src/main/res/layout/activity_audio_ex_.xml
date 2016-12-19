@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context="com.milimili.mediacodecex.audio_record_ex.AudioEx_Activity">
+    tools:context="com.milimili.mediacodecex.audio_ex.AudioEx_Activity">
 
     <Button
-        android:text="开始录制"
-        android:id="@+id/btn_start_record"
+        android:text="开始录制WAV文件"
+        android:id="@+id/btn_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
-        android:text="停止录制"
-        android:id="@+id/btn_stop_record"
+        android:text="开始播放"
+        android:id="@+id/btn_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

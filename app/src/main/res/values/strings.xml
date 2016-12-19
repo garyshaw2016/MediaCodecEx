@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MediaCodecEx</string>
+    <string name="audioexercise">AudioExercise</string>
 </resources>
