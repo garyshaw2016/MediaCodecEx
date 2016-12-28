@@ -125,70 +125,9 @@ JNIEXPORT int JNICALL Java_com_milimili_nativeex_JniUtil_sendVideoSpsPps
     RTMP_SendPacket(m_rtmp, packet, TRUE);
 }
 
-JNIEXPORT jint JNICALL Java_com_milimili_nativeex_JniUtil_sendVideoData
-        (JNIEnv *jniEnv, jclass jobj, jbyteArray data, jint dataLen, jboolean isKeyFrame,
-         jint timeStamp) {
-
-    if (data == NULL) {
-        return 0;
-    }
-
-    unsigned char *body = malloc((size_t) dataLen + 9);
-    memset(body, 0, (size_t) dataLen + 9);
-
-    int i = 0;
-    if (isKeyFrame) {
-        body[i++] = 0x17;// 1:Iframe  7:AVC
-        body[i++] = 0x01;// AVC NALU
-        body[i++] = 0x00;//avc时，全0，无意义
-        body[i++] = 0x00;
-        body[i++] = 0x00;
-
-
-        // NALU size
-        body[i++] = dataLen >> 24 & 0xff;
-        body[i++] = dataLen >> 16 & 0xff;
-        body[i++] = dataLen >> 8 & 0xff;
-        body[i++] = dataLen & 0xff;
-        // NALU data
-        memcpy(&body[i], data, (size_t) dataLen);
-    } else {
-        body[i++] = 0x27;// 2:Pframe  7:AVC
-        body[i++] = 0x01;// AVC NALU
-        body[i++] = 0x00;//avc时，全0，无意义
-        body[i++] = 0x00;
-        body[i++] = 0x00;
-
-
-        // NALU size
-        body[i++] = dataLen >> 24 & 0xff;
-        body[i++] = dataLen >> 16 & 0xff;
-        body[i++] = dataLen >> 8 & 0xff;
-        body[i++] = dataLen & 0xff;
-        // NALU data
-        memcpy(&body[i], data, dataLen);
-    }
-
-    int bRet = SendPacket(RTMP_PACKET_TYPE_VIDEO, body, (unsigned int)(i + dataLen), (unsigned int
-    )timeStamp);
-
-    free(body);
-
-    return bRet;
-
-}
-
-/**
- * 关闭流
- */
-JNIEXPORT void JNICALL Java_com_milimili_nativeex_JniUtil_close
-        (JNIEnv *jniEnv, jclass jobj) {
-
-}
-
 //发送rtmp  packet
-int SendPacket(unsigned int nPacketType, unsigned char *data, unsigned int size,
-               unsigned int nTimestamp) {
+int PublishPacket(unsigned int nPacketType, unsigned char *data, unsigned int size,
+                  unsigned int nTimestamp) {
     RTMPPacket *packet;
     if (nPacketType == RTMP_PACKET_TYPE_VIDEO) {
         //创建空间， 大小是rtmppacket结构体大小 + rtmp_MAX_HEAD_SIZE + 数据大小，
@@ -241,6 +180,68 @@ int SendPacket(unsigned int nPacketType, unsigned char *data, unsigned int size,
     //清理空间
     free(packet);
     return nRet;
+}
+
+JNIEXPORT jint JNICALL Java_com_milimili_nativeex_JniUtil_sendVideoData
+        (JNIEnv *jniEnv, jclass jobj, jbyteArray data, jint dataLen, jboolean isKeyFrame,
+         jint timeStamp) {
+
+    if (data == NULL) {
+        return 0;
+    }
+
+    unsigned char *body = malloc((size_t) dataLen + 9);
+    memset(body, 0, (size_t) dataLen + 9);
+
+    int i = 0;
+    if (isKeyFrame) {
+        body[i++] = 0x17;// 1:Iframe  7:AVC
+        body[i++] = 0x01;// AVC NALU
+        body[i++] = 0x00;//avc时，全0，无意义
+        body[i++] = 0x00;
+        body[i++] = 0x00;
+
+
+        // NALU size
+        body[i++] = dataLen >> 24 & 0xff;
+        body[i++] = dataLen >> 16 & 0xff;
+        body[i++] = dataLen >> 8 & 0xff;
+        body[i++] = dataLen & 0xff;
+        // NALU data
+        memcpy(&body[i], data, (size_t) dataLen);
+    } else {
+        body[i++] = 0x27;// 2:Pframe  7:AVC
+        body[i++] = 0x01;// AVC NALU
+        body[i++] = 0x00;//avc时，全0，无意义
+        body[i++] = 0x00;
+        body[i++] = 0x00;
+
+
+        // NALU size
+        body[i++] = dataLen >> 24 & 0xff;
+        body[i++] = dataLen >> 16 & 0xff;
+        body[i++] = dataLen >> 8 & 0xff;
+        body[i++] = dataLen & 0xff;
+        // NALU data
+        memcpy(&body[i], data, dataLen);
+    }
+
+    int bRet = PublishPacket(RTMP_PACKET_TYPE_VIDEO, body, (unsigned int) (i + dataLen),
+                             (unsigned int
+                             ) timeStamp);
+
+    free(body);
+
+    return bRet;
+
+}
+
+/**
+ * 关闭流
+ */
+JNIEXPORT void JNICALL Java_com_milimili_nativeex_JniUtil_close
+        (JNIEnv *jniEnv, jclass jobj) {
+
 }
 
 

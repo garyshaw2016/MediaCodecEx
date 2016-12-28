@@ -15,7 +15,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 
 public class CameraThread extends HandlerThread implements Camera.PreviewCallback {
-    private static final String TAG = "EncodeEx_Activity";
+    private static final String TAG = "CameraThread";
     private Camera camera;
     private long timeStamp;
     int frameNumber;

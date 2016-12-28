@@ -36,7 +36,11 @@
         <activity android:name=".encoder_ex.EncodeEx_Activity" />
         <activity android:name=".encoder2_ex.EncodeEx2_Activity" />
         <activity android:name=".mediamuxer_ex.MuxActivity" />
-        <activity android:name=".audio_ex.AudioEx_Activity"/>
+        <activity android:name=".audio_ex.AudioEx_Activity" />
+        <activity
+            android:name=".rtmp_push_ex.RtmpPushActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

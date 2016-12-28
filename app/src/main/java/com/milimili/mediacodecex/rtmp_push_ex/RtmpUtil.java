@@ -6,8 +6,10 @@ package com.milimili.mediacodecex.rtmp_push_ex;
  */
 public class RtmpUtil {
 
+    public static final String pushUrl = "http://www.b.cxria.com/live/666666";
+
     static {
-        System.loadLibrary("test");
+        System.loadLibrary("rtmppush");
     }
 
     public static native String getStringFromNative();

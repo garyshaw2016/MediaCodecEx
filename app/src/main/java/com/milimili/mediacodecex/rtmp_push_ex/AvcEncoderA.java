@@ -33,19 +33,19 @@ public class AvcEncoderA {
     /**
      * 输出到某个.h264文件的流
      */
-    private BufferedOutputStream bos;
+//    private BufferedOutputStream bos;
     private boolean isRunning;
     private int TIMEOUT_US = 12000;
     //关键帧数据
     private byte[] configBytes;
 
 
-    public AvcEncoderA() {
-        m_width = 1280;
-        m_height = 720;
+    public AvcEncoderA(int width,int height) {
+        m_width = width;
+        m_height = height;
         String mime = "video/avc";
         //创建待保存文件
-        createFile();
+//        createFile();
         //检测可用的编码器
         getSupportCodec();
         videoFormat = MediaFormat.createVideoFormat(mime, m_width, m_height);
@@ -64,8 +64,6 @@ public class AvcEncoderA {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -97,6 +95,8 @@ public class AvcEncoderA {
             public void run() {
                 //进入start状态
                 encoder.start();
+                //连接到rtmp
+                RtmpUtil.connect(RtmpUtil.pushUrl);
                 encodeRunning();
             }
         }).start();
@@ -111,7 +111,7 @@ public class AvcEncoderA {
         ByteBuffer[] outputBuffers = encoder.getOutputBuffers();
         //开始循环取数据并编码
         while (isRunning) {
-            if (CameraThread.YUVQueue.size() > 0) {
+            if (CameraThreadA.YUVQueue.size() > 0) {
                 //取数据
                 inputDatas = CameraThread.YUVQueue.poll();
                 byte[] yuv420p = new byte[m_width * m_height * 3 / 2];
@@ -148,9 +148,11 @@ public class AvcEncoderA {
                             System.arraycopy(configBytes, 0, keyFrame, 0, configBytes.length);//先cp配置帧
                             System.arraycopy(outData, 0, keyFrame, configBytes.length, outData.length);
                             //写入流
-                            bos.write(keyFrame);
+//                            bos.write(keyFrame);
+//                            RtmpUtil.sendVideoSpsPps(configBytes,configBytes.length,)
                         } else {
-                            bos.write(outData);
+//                            bos.write(outData);
+//                            RtmpUtil.sendVideoData(outData,outData.length,false,)
                         }
                         encoder.releaseOutputBuffer(outIndex, false);
                         //更新outIndex
@@ -175,35 +177,35 @@ public class AvcEncoderA {
         encoder.stop();
         encoder.release();
         //关闭流
-        try {
-            bos.flush();
-            bos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            bos.flush();
+//            bos.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    private static String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test1.h264";
+//    private static String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test1.h264";
 
-    /**
-     * 创建待保存的文件地址
-     */
-    private void createFile() {
-        File file = new File(path);
-        if (file.exists()) {
-            boolean delete = file.delete();
-            if (!delete) {
-                Log.w(TAG, "file delete fail");
-            }
-        }
-        //开一个流
-        try {
-            bos = new BufferedOutputStream(new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    /**
+//     * 创建待保存的文件地址
+//     */
+//    private void createFile() {
+//        File file = new File(path);
+//        if (file.exists()) {
+//            boolean delete = file.delete();
+//            if (!delete) {
+//                Log.w(TAG, "file delete fail");
+//            }
+//        }
+//        //开一个流
+//        try {
+//            bos = new BufferedOutputStream(new FileOutputStream(file));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     private void NV21ToNV12(byte[] nv21, byte[] nv12, int width, int height) {
         long startMs = System.currentTimeMillis();
